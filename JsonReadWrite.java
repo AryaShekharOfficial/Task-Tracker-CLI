@@ -45,7 +45,7 @@ class JsonRead{
         Path filepath = Paths.get("tasks.json");
         try{
             String readFile = Files.readString(filepath);
-            System.out.println(readFile);
+            TasksParser.handleparse(readFile);
         } catch (Exception e) {
             System.out.println("Error Reading File: " + e);
         }
