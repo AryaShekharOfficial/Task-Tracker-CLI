@@ -1,3 +1,8 @@
+## [0.2.0] - 2026-10-10
+
+### 🚀 Features
+
+- *(file parse)* Parse step 2
 ## [0.1.1] - 2026-10-10
 
 ### 🚜 Refactor

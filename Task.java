@@ -47,8 +47,8 @@ public class Task {
         this.status = status;
     }
 
-    public int getId() {
-        return id;
+    public String getId() {
+        return Integer.toString(id);
     }
 
     public String getName() {
