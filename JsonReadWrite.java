@@ -2,6 +2,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+
 public class JsonReadWrite {
     public static void main(String args[]){
         int choice = 1;
@@ -18,6 +19,7 @@ public class JsonReadWrite {
     
 }
 
+//To write to a Json file
 class JsonWrite{
     public void write(){
         Path filePath = Paths.get("tasks.json");
@@ -40,6 +42,7 @@ class JsonWrite{
     }
 }
 
+//To Read from a Json file
 class JsonRead{
     public void read(){
         Path filepath = Paths.get("tasks.json");
