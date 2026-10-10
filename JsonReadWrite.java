@@ -1,6 +1,8 @@
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class JsonReadWrite {
@@ -25,12 +27,12 @@ class JsonWrite{
         Path filePath = Paths.get("tasks.json");
         String toWrite = """
                 {
-                    "name" : "Aryashekhar",
-                    "age" : 20
-                }
-                {
-                    "name" : "Ujjwal",
-                    "age" : 23
+                    "###id" : "1###",
+                    "###name" : "My Task###",
+                    "###description" : "bla bla bla###",
+                    "###timeCreated" : "sth###",
+                    "###timeUpdated" : "sth###",
+                    "###status" : "sth###"
                 }
                 """;
         try{
@@ -46,9 +48,13 @@ class JsonWrite{
 class JsonRead{
     public void read(){
         Path filepath = Paths.get("tasks.json");
+        List<Task> tasks = new ArrayList<>();
         try{
             String readFile = Files.readString(filepath);
-            TasksParser.handleparse(readFile);
+            tasks = TasksParser.handleparse(readFile);
+            for (Task t: tasks){
+                System.out.println(t);
+            }
         } catch (Exception e) {
             System.out.println("Error Reading File: " + e);
         }

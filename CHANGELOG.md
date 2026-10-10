@@ -1,3 +1,8 @@
+## [0.1.1] - 2026-10-10
+
+### 🚜 Refactor
+
+- *(comments)* Add comments to TaskParser logic
 ## [0.1.0] - 2026-10-10
 
 ### 🚀 Features
