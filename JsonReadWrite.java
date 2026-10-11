@@ -42,16 +42,16 @@ class JsonWrite{
         if (tasks.size() > 0){ // if tasks exist last Id is searched and stored as previous id
             prevId = Integer.parseInt((tasks.get(tasks.size() - 1)).getId());
         }
-        else{ // if no tasks exist previous id is set to 0 and an initial [ is added to toWrite, otherwise the final string will not have the initial [
+        else{ // if no tasks exist previous id is set to 0
             prevId = 0;
-            toWrite += """
-                [
-                    """;
         }
+        // an initial [ is added to toWrite
+        toWrite += """
+            [
+                """;
         int newId = ++prevId; // the new id will obviously be previoius id + 1
         for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
             toWrite += """
-                [
                     {
                         "###id" : "%s###",
                         "###name" : "%s###",
@@ -59,11 +59,11 @@ class JsonWrite{
                         "###timeCreated" : "%s###",
                         "###timeUpdated" : "%s###",
                         "###status" : "%s###"
-                    },""".formatted(task.getId(), task.getName(), task.getDescription(), task.getTimeCreated(), task.getTimeUpdated(), task.getStatus());
+                    },
+                """.formatted(task.getId(), task.getName(), task.getDescription(), task.getTimeCreated(), task.getTimeUpdated(), task.getStatus());
         }
         // adds the new task at the end of toWrite
         toWrite +=  """
-
                 {
                     "###id" : "%s###",
                     "###name" : "%s###",
