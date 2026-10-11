@@ -9,14 +9,14 @@ import java.util.Scanner;
 
 public class JsonReadWrite {
     public static void main(String args[]){
-        int choice = 0;
+        int choice = 1;
         if (choice == 0){
             JsonWrite jw = new JsonWrite();
             jw.addTask();
         }
         else{
             //JsonRead jr = new JsonRead();
-            JsonRead.read();
+            TaskDisplay.displayTasks();
         }
         
     }
@@ -94,5 +94,29 @@ class JsonRead{
             System.out.println("Error Reading File: " + e);
         }
         return tasks;
+    }
+}
+
+class TaskDisplay{
+
+    // display a single task using getters to Task
+    private static void displayTask(Task task){
+        System.out.println("Id: " + task.getId());
+        System.out.println("Name: " + task.getName());
+        System.out.println("Description: " + task.getDescription());
+        System.out.println("Created: " + task.getTimeCreated());
+        System.out.println("Last Updated: " + task.getTimeUpdated());
+        System.out.println("Status: " + task.getStatus());
+    }
+
+    //displays all tasks
+    public static void displayTasks(){
+        List<Task> tasks = JsonRead.read(); // calls the read function of JsonRead class to get the ArrayList of all Task Objects
+        int i = 0;
+        for (Task t: tasks){ // loops thorugh the list and displays the tasks one by one using displayTask() function
+            i++;
+            System.out.println("— — — — — TASK %d — — — — —".formatted(i));
+            displayTask(t);
+        }
     }
 }
