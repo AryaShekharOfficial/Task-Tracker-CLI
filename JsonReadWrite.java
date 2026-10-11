@@ -2,8 +2,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 
@@ -104,8 +108,8 @@ class TaskDisplay{
         System.out.println("Id: " + task.getId());
         System.out.println("Name: " + task.getName());
         System.out.println("Description: " + task.getDescription());
-        System.out.println("Created: " + task.getTimeCreated());
-        System.out.println("Last Updated: " + task.getTimeUpdated());
+        System.out.println("Created: " + TimeFormatting.formatLocalMedium(Instant.parse(task.getTimeCreated())));
+        System.out.println("Last Updated: " + TimeFormatting.formatLocalMedium(Instant.parse(task.getTimeUpdated())));
         System.out.println("Status: " + task.getStatus());
     }
 
@@ -118,5 +122,14 @@ class TaskDisplay{
             System.out.println("— — — — — TASK %d — — — — —".formatted(i));
             displayTask(t);
         }
+    }
+}
+
+class TimeFormatting{
+    public static String formatLocalMedium(Instant now){
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+                                            .withLocale(Locale.getDefault())
+                                            .withZone(ZoneId.systemDefault());
+        return dateTimeFormatter.format(now);
     }
 }
