@@ -8,60 +8,83 @@ import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Scanner;
 
 
 public class JsonReadWrite {
     public static void main(String args[]){
-        int choice;
-        Scanner ob = new Scanner(System.in);
         if (args.length > 0){
             switch (args[0]){
                 case "add":
                     if (args.length < 2){
-                        System.out.println("Please provide an argument! (eg: task-cli add \"MyTask\")");
+                        System.out.println("Please provide an argument! eg: task-cli add \"MyTask\"");
                     } else if (args.length > 2){
-                        System.out.println("Please enclose the argument in double quotes! (eg: task-cli add \"MyTask\")");
+                        System.out.println("Please enclose the argument in double quotes! eg: task-cli add \"MyTask\"");
                     } else {
                         JsonWrite.addTask(args[1]);
                     }
+                    break;
+                case "update":
+                    if (args.length < 3){
+                        System.out.println("Please provide arguments! eg: update 1 \"UpdatedTask\"");
+                    } else if(args.length > 3){
+                        System.out.println("Please enclose the argument in double quotes! eg: update 1 \"UpdatedTask\"");
+                    } else {
+                        JsonWrite.updateTask(args[1], args[2]);
+                    }
+                    break;
+                case "delete":
+                    if (args.length < 2){
+                        System.out.println("Please provide an argument! eg: task-cli delete 1");
+                    } else if (args.length > 2){
+                        System.out.println("Command \"delete\" accepts only one argument! eg: task-cli delete 1");
+                    } else {
+                        JsonWrite.deleteTask(args[1]);;
+                    }
+                    break;
+                case "list":
+                    if (args.length > 1){
+                        if (args.length > 2){
+                            System.out.println("Command \"list\" accepts either one argument or no argument! eg: 1) task-cli list 2) task-cli list todo 3) task-cli list in-progress 4) task-cli list done");
+                        } else if (args.length > 1){
+                            switch (args[1]){
+                                case "todo":
+                                    TaskDisplay.displayTasksToDo();
+                                    break;
+                                case "in-progress":
+                                    TaskDisplay.displayTasksInProgress();
+                                    break;
+                                case "done":
+                                    TaskDisplay.displayTasksDone();
+                                    break;
+                                default:
+                                    System.out.println("Invalid argument! eg: 1) task-cli list todo 2) task-cli list in-progress 3) task-cli list done");
+                            }
+                        } else {
+                            TaskDisplay.displayTasks();
+                        }
+                    } else {
+                        TaskDisplay.displayTasks();
+                    }
+                    break;
+                case "mark-in-progress":
+                    if (args.length < 2){
+                        System.out.println("Please provide an argument! eg: mark-in-progress 1");
+                    } else {
+                        JsonWrite.markTaskAsInProgress(args[1]);
+                    }
+                    break;
+                case "mark-done":
+                    if (args.length < 2){
+                        System.out.println("Please provide an argument! eg: mark-done 1");
+                    } else {
+                        JsonWrite.markTaskAsDone(args[1]);
+                    }
+                    break;
+                default:
+                    System.out.println("Invalid Command!");
             }
         }
-        /* do{
-            System.out.println("MENU: ");
-            System.out.println("1. Add Task");
-            System.out.println("2. Display All Task");
-            System.out.println("3. Delete A Task");
-            System.out.println("4. Update A Task");
-            System.out.println("5. Mark A Task As in Progress");
-            System.out.println("6. Mark A Task As Done");
-            System.out.println("7. Display Tasks That Are in Progress");
-            System.out.println("8. Display Tasks That Are Done");
-            System.out.println("9. Exit");
-            System.out.print("Your choice: ");
-            choice = ob.nextInt();
-            ob.nextLine();
-            if (choice == 1){
-                //JsonWrite.addTask(ob);
-            } else if (choice == 2){
-                TaskDisplay.displayTasks();
-            } else if (choice == 3){
-                JsonWrite.deleteTask(ob);
-            } else if (choice == 4){
-                JsonWrite.updateTask(ob);
-            } else if (choice == 5){
-                JsonWrite.markTaskAsInProgress(ob);
-            } else if (choice == 6){
-                JsonWrite.markTaskAsDone(ob);
-            } else if (choice == 7){
-                TaskDisplay.displayTasksInProgress();
-            } else if (choice == 8){
-                TaskDisplay.displayTasksDone();
-            }
-        } while (choice != 9); */
-        ob.close();
     }
-    
 }
 
 //To write to a Json file
@@ -117,18 +140,12 @@ class JsonWrite{
     }
 
     // Function to update a task
-    public static void updateTask(Scanner ob){
+    public static void updateTask(String updateIdString, String newDesc){
+        int updateId = Integer.parseInt(updateIdString);
         Path filePath = Paths.get("tasks.json"); // gets the tasks.json file as Path object
         String toWrite = """
                 
                 """; //will hold the entire task string to be written to tasks.json
-        int updateId; //will hold the id of the task needs to be updated
-        System.out.print("Enter the id of the task you want to update: ");
-        updateId = ob.nextInt(); // takes the id of the task to be updated from the user
-        ob.nextLine();
-        String newDesc;
-        System.out.print("Enter the new description of the task: ");
-        newDesc = ob.nextLine();
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
         // an initial [ is added to toWrite
         toWrite += """
@@ -165,14 +182,12 @@ class JsonWrite{
     }
 
     // Function to delete a task
-    public static void deleteTask(Scanner ob){
+    public static void deleteTask(String delIdString){
         Path filePath = Paths.get("tasks.json"); // gets the tasks.json file as Path object
         String toWrite = """
                 
                 """; //will hold the entire task string to be written to tasks.json
-        int delId; //will hold the id of the task needs to be deleted
-        System.out.print("Enter the id of the task you want to delete: ");
-        delId = ob.nextInt(); // takes the id of the task to be deleted from the user
+        int delId = Integer.parseInt(delIdString); //will hold the id of the task needs to be deleted
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
         // an initial [ is added to toWrite
         toWrite += """
@@ -211,14 +226,12 @@ class JsonWrite{
     }
 
     // Function to mark a task as in progress
-    public static void markTaskAsInProgress(Scanner ob){
+    public static void markTaskAsInProgress(String markIdString){
         Path filePath = Paths.get("tasks.json"); // gets the tasks.json file as Path object
         String toWrite = """
                 
                 """; //will hold the entire task string to be written to tasks.json
-        int markId; //will hold the id of the task needs to be marked
-        System.out.print("Enter the id of the task you want to update: ");
-        markId = ob.nextInt(); // takes the id of the task to be updated from the user
+        int markId = Integer.parseInt(markIdString); //will hold the id of the task needs to be marked
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
         // an initial [ is added to toWrite
         toWrite += """
@@ -254,14 +267,12 @@ class JsonWrite{
     }
 
     // Function to mark a task as done
-    public static void markTaskAsDone(Scanner ob){
+    public static void markTaskAsDone(String markIdString){
         Path filePath = Paths.get("tasks.json"); // gets the tasks.json file as Path object
         String toWrite = """
                 
                 """; //will hold the entire task string to be written to tasks.json
-        int markId; //will hold the id of the task needs to be marked
-        System.out.print("Enter the id of the task you want to update: ");
-        markId = ob.nextInt(); // takes the id of the task to be updated from the user
+        int markId = Integer.parseInt(markIdString); //will hold the id of the task needs to be marked
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
         // an initial [ is added to toWrite
         toWrite += """
@@ -339,6 +350,19 @@ class TaskDisplay{
             }
         System.out.println("— — — — — TASK %d — — — — —".formatted(i)); // displayTask for a task will only be called when its status is not "deleted"
         displayTask(task);
+        }
+    }
+
+    // display tasks that are todo
+    public static void displayTasksToDo(){
+        List<Task> tasks = JsonRead.read(); // calls the read function of JsonRead class to get the ArrayList of all Task Objects
+        int i = 0;
+        for (Task task: tasks){
+            i++;
+            if (task.getStatus().equals("todo")){
+                System.out.println("— — — — — TASK %d — — — — —".formatted(i)); // displayTask for a task will only be called when its status is not "deleted"
+                displayTask(task);
+            }
         }
     }
 
