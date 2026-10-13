@@ -23,7 +23,9 @@ public class JsonReadWrite {
             System.out.println("4. Update A Task");
             System.out.println("5. Mark A Task As in Progress");
             System.out.println("6. Mark A Task As Done");
-            System.out.println("7. Exit");
+            System.out.println("7. Display Tasks That Are in Progress");
+            System.out.println("8. Display Tasks That Are Done");
+            System.out.println("9. Exit");
             System.out.print("Your choice: ");
             choice = ob.nextInt();
             ob.nextLine();
@@ -39,8 +41,12 @@ public class JsonReadWrite {
                 JsonWrite.markTaskAsInProgress(ob);
             } else if (choice == 6){
                 JsonWrite.markTaskAsDone(ob);
+            } else if (choice == 7){
+                TaskDisplay.displayTasksInProgress();
+            } else if (choice == 8){
+                TaskDisplay.displayTasksDone();
             }
-        } while (choice != 7);
+        } while (choice != 9);
         ob.close();
     }
     
@@ -323,6 +329,32 @@ class TaskDisplay{
             }
         System.out.println("— — — — — TASK %d — — — — —".formatted(i)); // displayTask for a task will only be called when its status is not "deleted"
         displayTask(task);
+        }
+    }
+
+    // displays tasks that are in progress
+    public static void displayTasksInProgress(){
+        List<Task> tasks = JsonRead.read(); // calls the read function of JsonRead class to get the ArrayList of all Task Objects
+        int i = 0;
+        for (Task task: tasks){
+            i++;
+            if (task.getStatus().equals("in progress")){
+                System.out.println("— — — — — TASK %d — — — — —".formatted(i)); // displayTask for a task will only be called when its status is not "deleted"
+                displayTask(task);
+            }
+        }
+    }
+
+    // display tasks that are done
+    public static void displayTasksDone(){
+        List<Task> tasks = JsonRead.read(); // calls the read function of JsonRead class to get the ArrayList of all Task Objects
+        int i = 0;
+        for (Task task: tasks){
+            i++;
+            if (task.getStatus().equals("done")){
+                System.out.println("— — — — — TASK %d — — — — —".formatted(i)); // displayTask for a task will only be called when its status is not "deleted"
+                displayTask(task);
+            }
         }
     }
 }
