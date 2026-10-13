@@ -20,7 +20,8 @@ public class JsonReadWrite {
             System.out.println("1. Add Task");
             System.out.println("2. Display All Task");
             System.out.println("3. Delete A Task");
-            System.out.println("4. Exit");
+            System.out.println("4. Update A Task");
+            System.out.println("5. Exit");
             System.out.print("Your choice: ");
             choice = ob.nextInt();
             ob.nextLine();
@@ -30,8 +31,10 @@ public class JsonReadWrite {
                 TaskDisplay.displayTasks();
             } else if (choice == 3){
                 JsonWrite.deleteTask(ob);
+            } else if (choice == 4){
+                JsonWrite.updateTask(ob);
             }
-        } while (choice!=4);
+        } while (choice!=5);
         ob.close();
     }
     
@@ -84,6 +87,54 @@ class JsonWrite{
                 }
             ]""".formatted(Integer.toString(newId), desc, Instant.now().toString(), Instant.now().toString(), "todo");
     try{
+            Files.writeString(filePath, toWrite); // writes the final toWrite string to tasks.json
+            System.out.println("Json Written Successfully!");
+        } catch (Exception e){
+            System.out.println("Error Writing File: " + e);
+        }
+    }
+
+    // Function to update a task
+    public static void updateTask(Scanner ob){
+        Path filePath = Paths.get("tasks.json"); // gets the tasks.json file as Path object
+        String toWrite = """
+                
+                """; //will hold the entire task string to be written to tasks.json
+        int delId; //will hold the id of the task needs to be updated
+        System.out.print("Enter the id of the task you want to update: ");
+        delId = ob.nextInt(); // takes the id of the task to be updated from the user
+        ob.nextLine();
+        String newDesc;
+        System.out.print("Enter the new description of the task: ");
+        newDesc = ob.nextLine();
+        List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
+        // an initial [ is added to toWrite
+        toWrite += """
+            [
+                """;
+        for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
+            if (Integer.parseInt(task.getId()) == delId){ 
+                /*if the id of the task in the ArrayList matches with 
+                the id of the task to updated, the description of the task is
+                set to newDesc and the update time is also updated*/
+                task.setDescription(newDesc);
+                task.setTimeUpdated(Instant.now().toString());
+            }
+            toWrite += """
+                    {
+                        "###id" : "%s###",
+                        "###description" : "%s###",
+                        "###timeCreated" : "%s###",
+                        "###timeUpdated" : "%s###",
+                        "###status" : "%s###"
+                    },
+                """.formatted(task.getId(), task.getDescription(), task.getTimeCreated(), task.getTimeUpdated(), task.getStatus());
+        }
+        toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
+        toWrite +=  """
+
+            ]"""; // adds the closing bracket ]
+        try{
             Files.writeString(filePath, toWrite); // writes the final toWrite string to tasks.json
             System.out.println("Json Written Successfully!");
         } catch (Exception e){
