@@ -110,8 +110,15 @@ class JsonWrite{
             [
                 """;
         for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
-            if (Integer.parseInt(task.getId()) == delId){ // if the id of the task in the ArrayList matches with the id of the task to deleted the task is skipped from being added to the toWrite String.
-                continue;
+            if (Integer.parseInt(task.getId()) == delId){ 
+                /*if the id of the task in the ArrayList matches with 
+                the id of the task to deleted, the status of the task is 
+                assigned to "deleted" and all its other values are set to null*/
+                task.setStatus("deleted");
+                task.setName(null);
+                task.setDescription(null);
+                task.setTimeCreated(null);
+                task.setTimeUpdated(null);
             }
             toWrite += """
                     {
@@ -167,22 +174,19 @@ class TaskDisplay{
     //displays all tasks
     public static void displayTasks(){
         List<Task> tasks = JsonRead.read(); // calls the read function of JsonRead class to get the ArrayList of all Task Objects
-        int i = 1; // will be used for checking deleted tasks
-        for (int j = 0; j < tasks.size(); j++){ // runs exactly for n times (n = total undeleted tasks), since the ArrayList only contains the undeleted tasks
-            while (Integer.parseInt(tasks.get(j).getId()) != i){ 
-                /* as long as i is not equal to the id of the current task, 
-                deleted will be printed for Task i, i.e. 
-                let's say there were 5 tasks with Ids: 1, 2, 3, 4, 5, now
-                we delete 2, 3 and 4, so the ArrayList will contain only
-                two tasks 1 and 5, so until i becomes 5 deleted will be printed
-                for 2, 3 and 4*/   
+        int i = 0;
+        for (Task task: tasks){
+            i++;
+            if (task.getStatus().equals("deleted")){ 
+                /* if the status of the current task is "deleted", 
+                the task is displayed as "deleted", 
+                and the loop moves on to the next iteration*/ 
                 System.out.println("— — — — — TASK %d — — — — —".formatted(i));
                 System.out.println("\u001B[3mdeleted\u001B[23m");
-                i++;
+                continue;
             }
-            System.out.println("— — — — — TASK %d — — — — —".formatted(i)); // when i matches the id of the current task the loop will get terminated and Task i will be displayed
-            displayTask(tasks.get(j));
-            i++;
+        System.out.println("— — — — — TASK %d — — — — —".formatted(i)); // displayTask for a task will only be called when its status is not "deleted"
+        displayTask(task);
         }
     }
 }
