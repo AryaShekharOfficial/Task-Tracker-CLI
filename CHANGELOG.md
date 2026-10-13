@@ -1,3 +1,13 @@
+## [0.4.0] - 2026-10-11
+
+### 🚀 Features
+
+- *(display)* Display all tasks
+- *(display)* Format output time
+
+### 🐛 Bug Fixes
+
+- *(add)* Correct Json formatting
 ## [0.3.0] - 2026-10-10
 
 ### 🚀 Features

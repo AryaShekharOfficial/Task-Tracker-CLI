@@ -13,35 +13,45 @@ import java.util.Scanner;
 
 public class JsonReadWrite {
     public static void main(String args[]){
-        int choice = 1;
-        if (choice == 0){
-            JsonWrite jw = new JsonWrite();
-            jw.addTask();
-        }
-        else{
-            //JsonRead jr = new JsonRead();
-            TaskDisplay.displayTasks();
-        }
-        
+        int choice;
+        Scanner ob = new Scanner(System.in);
+        do{
+            System.out.println("MENU: ");
+            System.out.println("1. Add Task");
+            System.out.println("2. Display All Task");
+            System.out.println("3. Delete A Task");
+            System.out.println("4. Exit");
+            System.out.print("Your choice: ");
+            choice = ob.nextInt();
+            ob.nextLine();
+            if (choice == 1){
+                JsonWrite.addTask(ob);
+            } else if (choice == 2){
+                TaskDisplay.displayTasks();
+            } else if (choice == 3){
+                JsonWrite.deleteTask(ob);
+            }
+        } while (choice!=4);
+        ob.close();
     }
     
 }
 
 //To write to a Json file
 class JsonWrite{
-    public void addTask(){
+    // Function to add a task
+    public static void addTask(Scanner ob){
         Path filePath = Paths.get("tasks.json"); // gets the tasks.json file as Path object
         String writeProperties[] = new String[2]; // will be used to hold name and description of the new task
         String toWrite = """
                 
                 """; //will hold the entire task string to be written to tasks.json
         int prevId; // to store previous id
-        try(Scanner ob = new Scanner(System.in)){ // takes name and description from the user
-            System.out.print("Enter name of the Task: ");
-            writeProperties[0] = ob.nextLine();
-            System.out.print("Enter description of the Task: ");
-            writeProperties[1] = ob.nextLine();
-        }
+        // Take name and description from the user
+        System.out.print("Enter name of the Task: ");
+        writeProperties[0] = ob.nextLine();
+        System.out.print("Enter description of the Task: ");
+        writeProperties[1] = ob.nextLine();
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks 
         if (tasks.size() > 0){ // if tasks exist last Id is searched and stored as previous id
             prevId = Integer.parseInt((tasks.get(tasks.size() - 1)).getId());
@@ -84,6 +94,47 @@ class JsonWrite{
             System.out.println("Error Writing File: " + e);
         }
     }
+
+    // Function to delete a task
+    public static void deleteTask(Scanner ob){
+        Path filePath = Paths.get("tasks.json"); // gets the tasks.json file as Path object
+        String toWrite = """
+                
+                """; //will hold the entire task string to be written to tasks.json
+        int delId; //will hold the id of the task needs to be deleted
+        System.out.print("Enter the id of the task you want to delete: ");
+        delId = ob.nextInt(); // takes the id of the task to be deleted from the user
+        List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
+        // an initial [ is added to toWrite
+        toWrite += """
+            [
+                """;
+        for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
+            if (Integer.parseInt(task.getId()) == delId){ // if the id of the task in the ArrayList matches with the id of the task to deleted the task is skipped from being added to the toWrite String.
+                continue;
+            }
+            toWrite += """
+                    {
+                        "###id" : "%s###",
+                        "###name" : "%s###",
+                        "###description" : "%s###",
+                        "###timeCreated" : "%s###",
+                        "###timeUpdated" : "%s###",
+                        "###status" : "%s###"
+                    },
+                """.formatted(task.getId(), task.getName(), task.getDescription(), task.getTimeCreated(), task.getTimeUpdated(), task.getStatus());
+        }
+        toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
+        toWrite +=  """
+
+            ]"""; // adds the closing bracket ]
+        try{
+            Files.writeString(filePath, toWrite); // writes the final toWrite string to tasks.json
+            System.out.println("Json Written Successfully!");
+        } catch (Exception e){
+            System.out.println("Error Writing File: " + e);
+        }
+    }
 }
 
 //To Read from a Json file
@@ -116,11 +167,22 @@ class TaskDisplay{
     //displays all tasks
     public static void displayTasks(){
         List<Task> tasks = JsonRead.read(); // calls the read function of JsonRead class to get the ArrayList of all Task Objects
-        int i = 0;
-        for (Task t: tasks){ // loops thorugh the list and displays the tasks one by one using displayTask() function
+        int i = 1; // will be used for checking deleted tasks
+        for (int j = 0; j < tasks.size(); j++){ // runs exactly for n times (n = total undeleted tasks), since the ArrayList only contains the undeleted tasks
+            while (Integer.parseInt(tasks.get(j).getId()) != i){ 
+                /* as long as i is not equal to the id of the current task, 
+                deleted will be printed for Task i, i.e. 
+                let's say there were 5 tasks with Ids: 1, 2, 3, 4, 5, now
+                we delete 2, 3 and 4, so the ArrayList will contain only
+                two tasks 1 and 5, so until i becomes 5 deleted will be printed
+                for 2, 3 and 4*/   
+                System.out.println("— — — — — TASK %d — — — — —".formatted(i));
+                System.out.println("\u001B[3mdeleted\u001B[23m");
+                i++;
+            }
+            System.out.println("— — — — — TASK %d — — — — —".formatted(i)); // when i matches the id of the current task the loop will get terminated and Task i will be displayed
+            displayTask(tasks.get(j));
             i++;
-            System.out.println("— — — — — TASK %d — — — — —".formatted(i));
-            displayTask(t);
         }
     }
 }
