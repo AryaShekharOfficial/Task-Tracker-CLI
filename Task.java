@@ -1,14 +1,12 @@
 public class Task {
     private int id;
-    private String name;
     private String description;
     private String timeCreated;
     private String timeUpdated;
     private String status;
 
-    public Task(String id, String name, String description, String timeCreated, String timeUpdated, String status) {
+    public Task(String id, String description, String timeCreated, String timeUpdated, String status) {
         this.id = Integer.parseInt(id);
-        this.name = name;
         this.description = description;
         this.timeCreated = timeCreated;
         this.timeUpdated = timeUpdated;
@@ -17,7 +15,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task [id=" + id + ", name=" + name + ", description=" + description + ", timeCreated=" + timeCreated
+        return "Task [id=" + id + ", description=" + description + ", timeCreated=" + timeCreated
                 + ", timeUpdated=" + timeUpdated + ", status=" + status + "]";
     }
 
@@ -25,10 +23,6 @@ public class Task {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void setDescription(String description) {
@@ -51,9 +45,7 @@ public class Task {
         return Integer.toString(id);
     }
 
-    public String getName() {
-        return name;
-    }
+    
 
     public String getDescription() {
         return description;

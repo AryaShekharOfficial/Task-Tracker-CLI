@@ -50,7 +50,7 @@ class IndividualTaskParser{
                 value = ""; // value is reset to hold the next value
             }
         }
-        Task indTaskObj = new Task(constructTask[0], constructTask[1], constructTask[2], constructTask[3], constructTask[4], constructTask[5]); // each value is passed to its respective property 
+        Task indTaskObj = new Task(constructTask[0], constructTask[1], constructTask[2], constructTask[3], constructTask[4]); // each value is passed to its respective property 
         return indTaskObj; //returns the task object to TaskParser
     }
 }
