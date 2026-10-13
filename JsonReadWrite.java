@@ -15,7 +15,19 @@ public class JsonReadWrite {
     public static void main(String args[]){
         int choice;
         Scanner ob = new Scanner(System.in);
-        do{
+        if (args.length > 0){
+            switch (args[0]){
+                case "add":
+                    if (args.length < 2){
+                        System.out.println("Please provide an argument! (eg: task-cli add \"MyTask\")");
+                    } else if (args.length > 2){
+                        System.out.println("Please enclose the argument in double quotes! (eg: task-cli add \"MyTask\")");
+                    } else {
+                        JsonWrite.addTask(args[1]);
+                    }
+            }
+        }
+        /* do{
             System.out.println("MENU: ");
             System.out.println("1. Add Task");
             System.out.println("2. Display All Task");
@@ -30,7 +42,7 @@ public class JsonReadWrite {
             choice = ob.nextInt();
             ob.nextLine();
             if (choice == 1){
-                JsonWrite.addTask(ob);
+                //JsonWrite.addTask(ob);
             } else if (choice == 2){
                 TaskDisplay.displayTasks();
             } else if (choice == 3){
@@ -46,7 +58,7 @@ public class JsonReadWrite {
             } else if (choice == 8){
                 TaskDisplay.displayTasksDone();
             }
-        } while (choice != 9);
+        } while (choice != 9); */
         ob.close();
     }
     
@@ -55,16 +67,14 @@ public class JsonReadWrite {
 //To write to a Json file
 class JsonWrite{
     // Function to add a task
-    public static void addTask(Scanner ob){
+    public static void addTask(String toAdd){
         Path filePath = Paths.get("tasks.json"); // gets the tasks.json file as Path object
         String desc = ""; // will be used to hold name and description of the new task
         String toWrite = """
                 
                 """; //will hold the entire task string to be written to tasks.json
         int prevId; // to store previous id
-        // Take the description from the user
-        System.out.print("Enter description of the Task: ");
-        desc = ob.nextLine();
+        desc = toAdd;
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks 
         if (tasks.size() > 0){ // if tasks exist last Id is searched and stored as previous id
             prevId = Integer.parseInt((tasks.get(tasks.size() - 1)).getId());
