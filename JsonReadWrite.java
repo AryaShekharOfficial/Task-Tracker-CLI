@@ -104,8 +104,8 @@ public class JsonReadWrite {
 //To write to a Json file
 class JsonWrite{
     // This function adds the String version of a task to toWrite and returns it
-    private static String addTaskToString(String toWrite, Task task){
-        toWrite += """
+    private static String addTaskToString(Task task){
+        String toWrite = """
                     {
                         "###id" : "%s###",
                         "###description" : "%s###",
@@ -116,6 +116,8 @@ class JsonWrite{
                 """.formatted(task.getId(), task.getDescription(), task.getTimeCreated(), task.getTimeUpdated(), task.getStatus());
         return toWrite;
     }
+
+    
     // This function takes the final toWrite String and writes it to the Json file
     private static void writeToFile(String toWrite){
         Path filePath = Paths.get(FilePath.getFilePath()); // gets the FilePath.getFilePath() file as Path object
@@ -146,7 +148,7 @@ class JsonWrite{
                 """;
         int newId = ++prevId; // the new id will obviously be previoius id + 1
         for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
-            toWrite = addTaskToString(toWrite, task);
+            toWrite += addTaskToString(task);
         }
         // adds the new task at the end of toWrite
         toWrite +=  """
@@ -181,7 +183,7 @@ class JsonWrite{
                 task.setDescription(newDesc);
                 task.setTimeUpdated(Instant.now().toString());
             }
-            toWrite = addTaskToString(toWrite, task);
+            toWrite += addTaskToString(task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
         toWrite +=  """
@@ -212,7 +214,7 @@ class JsonWrite{
                 task.setTimeCreated(null);
                 task.setTimeUpdated(null);
             }
-            toWrite = addTaskToString(toWrite, task);
+            toWrite += addTaskToString(task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
         toWrite +=  """
@@ -240,7 +242,7 @@ class JsonWrite{
                 set to newDesc and the update time is also updated*/
                 task.setStatus("in progress");
             }
-            toWrite = addTaskToString(toWrite, task);
+            toWrite += addTaskToString(task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
         toWrite +=  """
@@ -268,7 +270,7 @@ class JsonWrite{
                 set to newDesc and the update time is also updated*/
                 task.setStatus("done");
             }
-            toWrite = addTaskToString(toWrite, task);
+            toWrite += addTaskToString(task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
         toWrite +=  """
