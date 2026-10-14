@@ -10,11 +10,25 @@ import java.util.List;
 import java.util.Locale;
 
 
+
 public class JsonReadWrite {
     public static void main(String args[]){
-        if (args.length > 0){
-            switch (args[0]){
+        if (args.length > 0){ // check if there is any element in args for safety
+            switch (args[0]){ // implemented switch case for different commands: add, update, delete, list, mark
                 case "add":
+                    /*
+                        If the case is add, it checks if the number of arguments
+                        is less than 2, which would mean the user did not provide any argument
+                        (description) after the command. In that case the user will be notified
+                        that the command needs an argument.
+                        If the number of arguments is greater than 3, that would mean
+                        the user probably forgot to wrap the description in double
+                        quotes. In that case the user will be notified that the argument needs
+                        to be wrapped in double quotes.
+                        If not both the above cases, that would mean the user has provided
+                        the necessary description, and so the addTask funtion of the JsonWrite class
+                        would be called passing args[1] as the argument.
+                    */
                     if (args.length < 2){
                         System.out.println("Please provide an argument! eg: task-cli add \"MyTask\"");
                     } else if (args.length > 2){
@@ -48,13 +62,13 @@ public class JsonReadWrite {
                         } else if (args.length > 1){
                             switch (args[1]){
                                 case "todo":
-                                    TaskDisplay.displayTasksToDo();
+                                    TaskDisplay.displayTasksWithStatus("todo");;
                                     break;
                                 case "in-progress":
-                                    TaskDisplay.displayTasksInProgress();
+                                    TaskDisplay.displayTasksWithStatus("in-progress");
                                     break;
                                 case "done":
-                                    TaskDisplay.displayTasksDone();
+                                    TaskDisplay.displayTasksWithStatus("done");
                                     break;
                                 default:
                                     System.out.println("Invalid argument! eg: 1) task-cli list todo 2) task-cli list in-progress 3) task-cli list done");
@@ -91,11 +105,11 @@ public class JsonReadWrite {
 class JsonWrite{
     // Function to add a task
     public static void addTask(String toAdd){
-        Path filePath = Paths.get("tasks.json"); // gets the tasks.json file as Path object
+        Path filePath = Paths.get(FilePath.getFilePath()); // gets the FilePath.getFilePath() file as Path object
         String desc = ""; // will be used to hold name and description of the new task
         String toWrite = """
                 
-                """; //will hold the entire task string to be written to tasks.json
+                """; //will hold the entire task string to be written to FilePath.getFilePath()
         int prevId; // to store previous id
         desc = toAdd;
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks 
@@ -132,7 +146,7 @@ class JsonWrite{
                 }
             ]""".formatted(Integer.toString(newId), desc, Instant.now().toString(), Instant.now().toString(), "todo");
     try{
-            Files.writeString(filePath, toWrite); // writes the final toWrite string to tasks.json
+            Files.writeString(filePath, toWrite); // writes the final toWrite string to FilePath.getFilePath()
             System.out.println("Json Written Successfully!");
         } catch (Exception e){
             System.out.println("Error Writing File: " + e);
@@ -142,10 +156,10 @@ class JsonWrite{
     // Function to update a task
     public static void updateTask(String updateIdString, String newDesc){
         int updateId = Integer.parseInt(updateIdString);
-        Path filePath = Paths.get("tasks.json"); // gets the tasks.json file as Path object
+        Path filePath = Paths.get(FilePath.getFilePath()); // gets the FilePath.getFilePath() file as Path object
         String toWrite = """
                 
-                """; //will hold the entire task string to be written to tasks.json
+                """; //will hold the entire task string to be written to FilePath.getFilePath()
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
         // an initial [ is added to toWrite
         toWrite += """
@@ -174,7 +188,7 @@ class JsonWrite{
 
             ]"""; // adds the closing bracket ]
         try{
-            Files.writeString(filePath, toWrite); // writes the final toWrite string to tasks.json
+            Files.writeString(filePath, toWrite); // writes the final toWrite string to FilePath.getFilePath()
             System.out.println("Json Written Successfully!");
         } catch (Exception e){
             System.out.println("Error Writing File: " + e);
@@ -183,10 +197,10 @@ class JsonWrite{
 
     // Function to delete a task
     public static void deleteTask(String delIdString){
-        Path filePath = Paths.get("tasks.json"); // gets the tasks.json file as Path object
+        Path filePath = Paths.get(FilePath.getFilePath()); // gets the FilePath.getFilePath() file as Path object
         String toWrite = """
                 
-                """; //will hold the entire task string to be written to tasks.json
+                """; //will hold the entire task string to be written to FilePath.getFilePath()
         int delId = Integer.parseInt(delIdString); //will hold the id of the task needs to be deleted
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
         // an initial [ is added to toWrite
@@ -218,7 +232,7 @@ class JsonWrite{
 
             ]"""; // adds the closing bracket ]
         try{
-            Files.writeString(filePath, toWrite); // writes the final toWrite string to tasks.json
+            Files.writeString(filePath, toWrite); // writes the final toWrite string to FilePath.getFilePath()
             System.out.println("Json Written Successfully!");
         } catch (Exception e){
             System.out.println("Error Writing File: " + e);
@@ -227,10 +241,10 @@ class JsonWrite{
 
     // Function to mark a task as in progress
     public static void markTaskAsInProgress(String markIdString){
-        Path filePath = Paths.get("tasks.json"); // gets the tasks.json file as Path object
+        Path filePath = Paths.get(FilePath.getFilePath()); // gets the FilePath.getFilePath() file as Path object
         String toWrite = """
                 
-                """; //will hold the entire task string to be written to tasks.json
+                """; //will hold the entire task string to be written to FilePath.getFilePath()
         int markId = Integer.parseInt(markIdString); //will hold the id of the task needs to be marked
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
         // an initial [ is added to toWrite
@@ -259,7 +273,7 @@ class JsonWrite{
 
             ]"""; // adds the closing bracket ]
         try{
-            Files.writeString(filePath, toWrite); // writes the final toWrite string to tasks.json
+            Files.writeString(filePath, toWrite); // writes the final toWrite string to FilePath.getFilePath()
             System.out.println("Json Written Successfully!");
         } catch (Exception e){
             System.out.println("Error Writing File: " + e);
@@ -268,10 +282,10 @@ class JsonWrite{
 
     // Function to mark a task as done
     public static void markTaskAsDone(String markIdString){
-        Path filePath = Paths.get("tasks.json"); // gets the tasks.json file as Path object
+        Path filePath = Paths.get(FilePath.getFilePath()); // gets the FilePath.getFilePath() file as Path object
         String toWrite = """
                 
-                """; //will hold the entire task string to be written to tasks.json
+                """; //will hold the entire task string to be written to FilePath.getFilePath()
         int markId = Integer.parseInt(markIdString); //will hold the id of the task needs to be marked
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
         // an initial [ is added to toWrite
@@ -300,7 +314,7 @@ class JsonWrite{
 
             ]"""; // adds the closing bracket ]
         try{
-            Files.writeString(filePath, toWrite); // writes the final toWrite string to tasks.json
+            Files.writeString(filePath, toWrite); // writes the final toWrite string to FilePath.getFilePath()
             System.out.println("Json Written Successfully!");
         } catch (Exception e){
             System.out.println("Error Writing File: " + e);
@@ -311,7 +325,7 @@ class JsonWrite{
 //To Read from a Json file
 class JsonRead{
     public static List<Task> read(){
-        Path filepath = Paths.get("tasks.json");
+        Path filepath = Paths.get(FilePath.getFilePath());
         List<Task> tasks = new ArrayList<>();
         try{
             String readFile = Files.readString(filepath);
@@ -337,6 +351,7 @@ class TaskDisplay{
     //displays all tasks
     public static void displayTasks(){
         List<Task> tasks = JsonRead.read(); // calls the read function of JsonRead class to get the ArrayList of all Task Objects
+        size_check(tasks);
         int i = 0;
         for (Task task: tasks){
             i++;
@@ -353,42 +368,23 @@ class TaskDisplay{
         }
     }
 
-    // display tasks that are todo
-    public static void displayTasksToDo(){
+    // Function to display tasks based on status
+    public static void displayTasksWithStatus(String status){
         List<Task> tasks = JsonRead.read(); // calls the read function of JsonRead class to get the ArrayList of all Task Objects
+        size_check(tasks);
         int i = 0;
         for (Task task: tasks){
             i++;
-            if (task.getStatus().equals("todo")){
-                System.out.println("— — — — — TASK %d — — — — —".formatted(i)); // displayTask for a task will only be called when its status is not "deleted"
+            if (task.getStatus().equals(status)){
+                System.out.println("— — — — — TASK %d — — — — —".formatted(i)); 
                 displayTask(task);
             }
         }
     }
 
-    // displays tasks that are in progress
-    public static void displayTasksInProgress(){
-        List<Task> tasks = JsonRead.read(); // calls the read function of JsonRead class to get the ArrayList of all Task Objects
-        int i = 0;
-        for (Task task: tasks){
-            i++;
-            if (task.getStatus().equals("in progress")){
-                System.out.println("— — — — — TASK %d — — — — —".formatted(i)); // displayTask for a task will only be called when its status is not "deleted"
-                displayTask(task);
-            }
-        }
-    }
-
-    // display tasks that are done
-    public static void displayTasksDone(){
-        List<Task> tasks = JsonRead.read(); // calls the read function of JsonRead class to get the ArrayList of all Task Objects
-        int i = 0;
-        for (Task task: tasks){
-            i++;
-            if (task.getStatus().equals("done")){
-                System.out.println("— — — — — TASK %d — — — — —".formatted(i)); // displayTask for a task will only be called when its status is not "deleted"
-                displayTask(task);
-            }
+    private static void size_check(List<Task> tasks){
+        if (tasks.size() == 0){
+            System.out.println("No tasks found. Use 'task-cli add \"YourTaskDescription\"' to create one.");
         }
     }
 }
@@ -401,3 +397,22 @@ class TimeFormatting{
         return dateTimeFormatter.format(now);
     }
 }
+
+class FilePath{
+    private static final String FILE_PATH = System.getProperty("user.home") + java.io.File.separator + ".tasks.json";
+
+    public static String getFilePath() {
+
+        if (Files.notExists(Paths.get(FILE_PATH))){
+            try{
+                Path filePath = Paths.get(FILE_PATH);
+                Files.createFile(filePath);
+            } catch (Exception e){
+                System.out.println("Failed to create Json!");
+            }
+        }
+        return FILE_PATH;
+    }
+
+}
+
