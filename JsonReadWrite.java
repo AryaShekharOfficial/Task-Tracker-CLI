@@ -117,7 +117,21 @@ class JsonWrite{
         return toWrite;
     }
 
-    
+    // This function returns an opening [ for other functions to add to the beginning of a String
+    private static String addOpeningBracket(){
+        String toWrite = """
+            [
+                """;
+        return toWrite;
+    }
+
+    // This function returns a closing ] for other functions to add to the end of a String
+    private static String addClosingBracket(){
+        String toWrite =  """
+
+            ]""";
+        return toWrite;
+    }
     // This function takes the final toWrite String and writes it to the Json file
     private static void writeToFile(String toWrite){
         Path filePath = Paths.get(FilePath.getFilePath()); // gets the FilePath.getFilePath() file as Path object
@@ -143,9 +157,7 @@ class JsonWrite{
             prevId = 0;
         }
         // an initial [ is added to toWrite
-        toWrite += """
-            [
-                """;
+        toWrite += addOpeningBracket();
         int newId = ++prevId; // the new id will obviously be previoius id + 1
         for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
             toWrite += addTaskToString(task);
@@ -172,9 +184,7 @@ class JsonWrite{
                 """; //will hold the entire task string to be written to FilePath.getFilePath()
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
         // an initial [ is added to toWrite
-        toWrite += """
-            [
-                """;
+        toWrite += addOpeningBracket();
         for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
             if (Integer.parseInt(task.getId()) == updateId){ 
                 /*if the id of the task in the ArrayList matches with 
@@ -186,9 +196,7 @@ class JsonWrite{
             toWrite += addTaskToString(task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
-        toWrite +=  """
-
-            ]"""; // adds the closing bracket ]
+        toWrite += addClosingBracket(); // adds the closing bracket ]
         writeToFile(toWrite);
         System.out.println("Task Updated Successfully! (ID: %d)".formatted(updateId));
     }
@@ -201,9 +209,7 @@ class JsonWrite{
         int delId = Integer.parseInt(delIdString); //will hold the id of the task needs to be deleted
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
         // an initial [ is added to toWrite
-        toWrite += """
-            [
-                """;
+        toWrite += addOpeningBracket();
         for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
             if (Integer.parseInt(task.getId()) == delId){ 
                 /*if the id of the task in the ArrayList matches with 
@@ -217,9 +223,7 @@ class JsonWrite{
             toWrite += addTaskToString(task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
-        toWrite +=  """
-
-            ]"""; // adds the closing bracket ]
+        toWrite +=  addClosingBracket(); // adds the closing bracket ]
         writeToFile(toWrite);
         System.out.println("Task Deleted Successfully! (ID: %d)".formatted(delId));
     }
@@ -232,9 +236,7 @@ class JsonWrite{
         int markId = Integer.parseInt(markIdString); //will hold the id of the task needs to be marked
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
         // an initial [ is added to toWrite
-        toWrite += """
-            [
-                """;
+        toWrite += addOpeningBracket();
         for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
             if (Integer.parseInt(task.getId()) == markId){ 
                 /*if the id of the task in the ArrayList matches with 
@@ -245,9 +247,7 @@ class JsonWrite{
             toWrite += addTaskToString(task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
-        toWrite +=  """
-
-            ]"""; // adds the closing bracket ]
+        toWrite +=  addClosingBracket(); // adds the closing bracket ]
         writeToFile(toWrite);
         System.out.println("Task %d is in progress.".formatted(markId));
     }
@@ -260,9 +260,7 @@ class JsonWrite{
         int markId = Integer.parseInt(markIdString); //will hold the id of the task needs to be marked
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
         // an initial [ is added to toWrite
-        toWrite += """
-            [
-                """;
+        toWrite += addOpeningBracket();
         for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
             if (Integer.parseInt(task.getId()) == markId){ 
                 /*if the id of the task in the ArrayList matches with 
@@ -273,9 +271,7 @@ class JsonWrite{
             toWrite += addTaskToString(task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
-        toWrite +=  """
-
-            ]"""; // adds the closing bracket ]
+        toWrite +=  addClosingBracket(); // adds the closing bracket ]
         writeToFile(toWrite);
         System.out.println("Task %d marked as done.".formatted(markId));
     }
