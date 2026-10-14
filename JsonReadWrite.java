@@ -103,9 +103,30 @@ public class JsonReadWrite {
 
 //To write to a Json file
 class JsonWrite{
+    // This function adds the String version of a task to toWrite and returns it
+    private static String addTaskToString(String toWrite, Task task){
+        toWrite += """
+                    {
+                        "###id" : "%s###",
+                        "###description" : "%s###",
+                        "###timeCreated" : "%s###",
+                        "###timeUpdated" : "%s###",
+                        "###status" : "%s###"
+                    },
+                """.formatted(task.getId(), task.getDescription(), task.getTimeCreated(), task.getTimeUpdated(), task.getStatus());
+        return toWrite;
+    }
+    // This function takes the final toWrite String and writes it to the Json file
+    private static void writeToFile(String toWrite){
+        Path filePath = Paths.get(FilePath.getFilePath()); // gets the FilePath.getFilePath() file as Path object
+        try{
+            Files.writeString(filePath, toWrite); // writes the final toWrite string to FilePath.getFilePath()
+        } catch (Exception e){
+            System.out.println("Error Writing File: " + e);
+        }
+    }
     // Function to add a task
     public static void addTask(String toAdd){
-        Path filePath = Paths.get(FilePath.getFilePath()); // gets the FilePath.getFilePath() file as Path object
         String desc = ""; // will be used to hold name and description of the new task
         String toWrite = """
                 
@@ -125,15 +146,7 @@ class JsonWrite{
                 """;
         int newId = ++prevId; // the new id will obviously be previoius id + 1
         for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
-            toWrite += """
-                    {
-                        "###id" : "%s###",
-                        "###description" : "%s###",
-                        "###timeCreated" : "%s###",
-                        "###timeUpdated" : "%s###",
-                        "###status" : "%s###"
-                    },
-                """.formatted(task.getId(), task.getDescription(), task.getTimeCreated(), task.getTimeUpdated(), task.getStatus());
+            toWrite = addTaskToString(toWrite, task);
         }
         // adds the new task at the end of toWrite
         toWrite +=  """
@@ -145,18 +158,13 @@ class JsonWrite{
                     "###status" : "%s###"
                 }
             ]""".formatted(Integer.toString(newId), desc, Instant.now().toString(), Instant.now().toString(), "todo");
-    try{
-            Files.writeString(filePath, toWrite); // writes the final toWrite string to FilePath.getFilePath()
-            System.out.println("Json Written Successfully!");
-        } catch (Exception e){
-            System.out.println("Error Writing File: " + e);
-        }
+        writeToFile(toWrite);
+        System.out.println("Task Successfully Added! (ID: %d)".formatted(newId));
     }
 
     // Function to update a task
     public static void updateTask(String updateIdString, String newDesc){
         int updateId = Integer.parseInt(updateIdString);
-        Path filePath = Paths.get(FilePath.getFilePath()); // gets the FilePath.getFilePath() file as Path object
         String toWrite = """
                 
                 """; //will hold the entire task string to be written to FilePath.getFilePath()
@@ -173,31 +181,18 @@ class JsonWrite{
                 task.setDescription(newDesc);
                 task.setTimeUpdated(Instant.now().toString());
             }
-            toWrite += """
-                    {
-                        "###id" : "%s###",
-                        "###description" : "%s###",
-                        "###timeCreated" : "%s###",
-                        "###timeUpdated" : "%s###",
-                        "###status" : "%s###"
-                    },
-                """.formatted(task.getId(), task.getDescription(), task.getTimeCreated(), task.getTimeUpdated(), task.getStatus());
+            toWrite = addTaskToString(toWrite, task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
         toWrite +=  """
 
             ]"""; // adds the closing bracket ]
-        try{
-            Files.writeString(filePath, toWrite); // writes the final toWrite string to FilePath.getFilePath()
-            System.out.println("Json Written Successfully!");
-        } catch (Exception e){
-            System.out.println("Error Writing File: " + e);
-        }
+        writeToFile(toWrite);
+        System.out.println("Task Updated Successfully! (ID: %d)".formatted(updateId));
     }
 
     // Function to delete a task
     public static void deleteTask(String delIdString){
-        Path filePath = Paths.get(FilePath.getFilePath()); // gets the FilePath.getFilePath() file as Path object
         String toWrite = """
                 
                 """; //will hold the entire task string to be written to FilePath.getFilePath()
@@ -217,31 +212,18 @@ class JsonWrite{
                 task.setTimeCreated(null);
                 task.setTimeUpdated(null);
             }
-            toWrite += """
-                    {
-                        "###id" : "%s###",
-                        "###description" : "%s###",
-                        "###timeCreated" : "%s###",
-                        "###timeUpdated" : "%s###",
-                        "###status" : "%s###"
-                    },
-                """.formatted(task.getId(), task.getDescription(), task.getTimeCreated(), task.getTimeUpdated(), task.getStatus());
+            toWrite = addTaskToString(toWrite, task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
         toWrite +=  """
 
             ]"""; // adds the closing bracket ]
-        try{
-            Files.writeString(filePath, toWrite); // writes the final toWrite string to FilePath.getFilePath()
-            System.out.println("Json Written Successfully!");
-        } catch (Exception e){
-            System.out.println("Error Writing File: " + e);
-        }
+        writeToFile(toWrite);
+        System.out.println("Task Deleted Successfully! (ID: %d)".formatted(delId));
     }
 
     // Function to mark a task as in progress
     public static void markTaskAsInProgress(String markIdString){
-        Path filePath = Paths.get(FilePath.getFilePath()); // gets the FilePath.getFilePath() file as Path object
         String toWrite = """
                 
                 """; //will hold the entire task string to be written to FilePath.getFilePath()
@@ -258,31 +240,18 @@ class JsonWrite{
                 set to newDesc and the update time is also updated*/
                 task.setStatus("in progress");
             }
-            toWrite += """
-                    {
-                        "###id" : "%s###",
-                        "###description" : "%s###",
-                        "###timeCreated" : "%s###",
-                        "###timeUpdated" : "%s###",
-                        "###status" : "%s###"
-                    },
-                """.formatted(task.getId(), task.getDescription(), task.getTimeCreated(), task.getTimeUpdated(), task.getStatus());
+            toWrite = addTaskToString(toWrite, task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
         toWrite +=  """
 
             ]"""; // adds the closing bracket ]
-        try{
-            Files.writeString(filePath, toWrite); // writes the final toWrite string to FilePath.getFilePath()
-            System.out.println("Json Written Successfully!");
-        } catch (Exception e){
-            System.out.println("Error Writing File: " + e);
-        }
+        writeToFile(toWrite);
+        System.out.println("Task %d is in progress.".formatted(markId));
     }
 
     // Function to mark a task as done
     public static void markTaskAsDone(String markIdString){
-        Path filePath = Paths.get(FilePath.getFilePath()); // gets the FilePath.getFilePath() file as Path object
         String toWrite = """
                 
                 """; //will hold the entire task string to be written to FilePath.getFilePath()
@@ -299,26 +268,14 @@ class JsonWrite{
                 set to newDesc and the update time is also updated*/
                 task.setStatus("done");
             }
-            toWrite += """
-                    {
-                        "###id" : "%s###",
-                        "###description" : "%s###",
-                        "###timeCreated" : "%s###",
-                        "###timeUpdated" : "%s###",
-                        "###status" : "%s###"
-                    },
-                """.formatted(task.getId(), task.getDescription(), task.getTimeCreated(), task.getTimeUpdated(), task.getStatus());
+            toWrite = addTaskToString(toWrite, task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
         toWrite +=  """
 
             ]"""; // adds the closing bracket ]
-        try{
-            Files.writeString(filePath, toWrite); // writes the final toWrite string to FilePath.getFilePath()
-            System.out.println("Json Written Successfully!");
-        } catch (Exception e){
-            System.out.println("Error Writing File: " + e);
-        }
+        writeToFile(toWrite);
+        System.out.println("Task %d marked as done.".formatted(markId));
     }
 }
 
@@ -413,6 +370,5 @@ class FilePath{
         }
         return FILE_PATH;
     }
-
 }
 
