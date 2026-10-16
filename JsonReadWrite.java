@@ -84,14 +84,16 @@ public class JsonReadWrite {
                     if (args.length < 2){
                         System.out.println("Please provide an argument! eg: mark-in-progress 1");
                     } else {
-                        JsonWrite.markTaskAsInProgress(args[1]);
+                        //JsonWrite.markTaskAsInProgress(args[1]);
+                        JsonWrite.markTask(args[1], "in-progress");
                     }
                     break;
                 case "mark-done":
                     if (args.length < 2){
                         System.out.println("Please provide an argument! eg: mark-done 1");
                     } else {
-                        JsonWrite.markTaskAsDone(args[1]);
+                        //JsonWrite.markTaskAsDone(args[1]);
+                        JsonWrite.markTask(args[1], "done");
                     }
                     break;
                 default:
@@ -228,8 +230,8 @@ class JsonWrite{
         System.out.println("Task Deleted Successfully! (ID: %d)".formatted(delId));
     }
 
-    // Function to mark a task as in progress
-    public static void markTaskAsInProgress(String markIdString){
+    // Function to mark the status of a task either "in-progress" or "done"
+    public static void markTask(String markIdString, String markAs){
         String toWrite = """
                 
                 """; //will hold the entire task string to be written to FilePath.getFilePath()
@@ -242,38 +244,18 @@ class JsonWrite{
                 /*if the id of the task in the ArrayList matches with 
                 the id of the task to updated, the description of the task is
                 set to newDesc and the update time is also updated*/
-                task.setStatus("in progress");
+                task.setStatus(markAs);
             }
             toWrite += addTaskToString(task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
         toWrite +=  addClosingBracket(); // adds the closing bracket ]
         writeToFile(toWrite);
-        System.out.println("Task %d is in progress.".formatted(markId));
-    }
-
-    // Function to mark a task as done
-    public static void markTaskAsDone(String markIdString){
-        String toWrite = """
-                
-                """; //will hold the entire task string to be written to FilePath.getFilePath()
-        int markId = Integer.parseInt(markIdString); //will hold the id of the task needs to be marked
-        List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
-        // an initial [ is added to toWrite
-        toWrite += addOpeningBracket();
-        for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
-            if (Integer.parseInt(task.getId()) == markId){ 
-                /*if the id of the task in the ArrayList matches with 
-                the id of the task to updated, the description of the task is
-                set to newDesc and the update time is also updated*/
-                task.setStatus("done");
-            }
-            toWrite += addTaskToString(task);
+        if (markAs.equals("in_progress")){
+            System.out.println("Task %d is in progress.".formatted(markId));
+        } else {
+            System.out.println("Task %d marked as done.".formatted(markId));
         }
-        toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
-        toWrite +=  addClosingBracket(); // adds the closing bracket ]
-        writeToFile(toWrite);
-        System.out.println("Task %d marked as done.".formatted(markId));
     }
 }
 
