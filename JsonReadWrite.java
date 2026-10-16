@@ -185,16 +185,11 @@ class JsonWrite{
                 
                 """; //will hold the entire task string to be written to FilePath.getFilePath()
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
+        tasks.get(updateId-1).setDescription(newDesc);
+        tasks.get(updateId-1).setTimeUpdated(Instant.now().toString());
         // an initial [ is added to toWrite
         toWrite += addOpeningBracket();
         for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
-            if (Integer.parseInt(task.getId()) == updateId){ 
-                /*if the id of the task in the ArrayList matches with 
-                the id of the task to updated, the description of the task is
-                set to newDesc and the update time is also updated*/
-                task.setDescription(newDesc);
-                task.setTimeUpdated(Instant.now().toString());
-            }
             toWrite += addTaskToString(task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
@@ -210,18 +205,13 @@ class JsonWrite{
                 """; //will hold the entire task string to be written to FilePath.getFilePath()
         int delId = Integer.parseInt(delIdString); //will hold the id of the task needs to be deleted
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
+        tasks.get(delId - 1).setStatus("deleted");
+        tasks.get(delId - 1).setDescription(null);
+        tasks.get(delId - 1).setTimeCreated(null);
+        tasks.get(delId - 1).setTimeUpdated(null);
         // an initial [ is added to toWrite
         toWrite += addOpeningBracket();
         for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
-            if (Integer.parseInt(task.getId()) == delId){ 
-                /*if the id of the task in the ArrayList matches with 
-                the id of the task to deleted, the status of the task is 
-                assigned to "deleted" and all its other values are set to null*/
-                task.setStatus("deleted");
-                task.setDescription(null);
-                task.setTimeCreated(null);
-                task.setTimeUpdated(null);
-            }
             toWrite += addTaskToString(task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
@@ -237,15 +227,10 @@ class JsonWrite{
                 """; //will hold the entire task string to be written to FilePath.getFilePath()
         int markId = Integer.parseInt(markIdString); //will hold the id of the task needs to be marked
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
+        tasks.get(markId-1).setStatus(markAs);
         // an initial [ is added to toWrite
         toWrite += addOpeningBracket();
         for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
-            if (Integer.parseInt(task.getId()) == markId){ 
-                /*if the id of the task in the ArrayList matches with 
-                the id of the task to updated, the description of the task is
-                set to newDesc and the update time is also updated*/
-                task.setStatus(markAs);
-            }
             toWrite += addTaskToString(task);
         }
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
