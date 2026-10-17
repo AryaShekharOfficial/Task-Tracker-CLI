@@ -56,28 +56,37 @@ public class JsonReadWrite {
                     }
                     break;
                 case "list":
-                    if (args.length > 1){
-                        if (args.length > 2){
-                            System.out.println("Command \"list\" accepts either one argument or no argument! eg: 1) task-cli list 2) task-cli list todo 3) task-cli list in-progress 4) task-cli list done");
-                        } else if (args.length > 1){
-                            switch (args[1]){
-                                case "todo":
-                                    TaskDisplay.displayTasksWithStatus("todo");;
-                                    break;
-                                case "in-progress":
-                                    TaskDisplay.displayTasksWithStatus("in-progress");
-                                    break;
-                                case "done":
-                                    TaskDisplay.displayTasksWithStatus("done");
-                                    break;
-                                default:
-                                    System.out.println("Invalid argument! eg: 1) task-cli list todo 2) task-cli list in-progress 3) task-cli list done");
-                            }
-                        } else {
+                    int i = 1;
+                    if (args.length > 1 && args[1].equals("details")){
+                        if (args.length == 2){
                             TaskDisplay.displayTasks();
+                            break;
                         }
-                    } else {
-                        TaskDisplay.displayTasks();
+                        if (args.length > 3){
+                            System.out.println("Command \\\"list details\\\" accepts either one argument or no argument! eg: 1) task-cli list details 2) task-cli list details todo 3) task-cli list details in-progress 4) task-cli list details done");
+                            break;
+                        } else {
+                            i = 2;
+                        }
+                    } else if (args.length > 0){
+                        if (args.length == 1){
+                            TaskDisplay.displayOnlyTasks("null");
+                            break;
+                        } else if (args.length > 2){
+                            System.out.println("Command \\\"list\\\" accepts either one argument or no argument! eg: 1) task-cli list 2) task-cli list todo 3) task-cli list in-progress 4) task-cli list done");
+                            break;
+                        }
+                    }
+                    switch (args[i]){
+                        case "todo", "in-progress", "done":
+                            if (i == 1){
+                                TaskDisplay.displayOnlyTasks(args[i]);
+                            } else {
+                                TaskDisplay.displayTasksWithStatus(args[i]);
+                            }
+                            break;
+                        default:
+                            System.out.println("Invalid command!");
                     }
                     break;
                 case "mark-in-progress":
@@ -148,7 +157,7 @@ class JsonWrite{
         String desc = ""; // will be used to hold name and description of the new task
         String toWrite = """
                 
-                """; //will hold the entire task string to be written to FilePath.getFilePath()
+                """; // will hold the entire task string to be written to FilePath.getFilePath()
         int prevId; // to store previous id
         desc = toAdd;
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks 
@@ -270,7 +279,7 @@ class TaskDisplay{
         System.out.println("Status: " + task.getStatus());
     }
 
-    //displays all tasks
+    //displays all tasks with full details
     public static void displayTasks(){
         List<Task> tasks = JsonRead.read(); // calls the read function of JsonRead class to get the ArrayList of all Task Objects
         size_check(tasks);
@@ -287,6 +296,34 @@ class TaskDisplay{
             }
         System.out.println("— — — — — TASK %d — — — — —".formatted(i)); // displayTask for a task will only be called when its status is not "deleted"
         displayTask(task);
+        }
+    }
+
+    //displays only tasks
+    public static void displayOnlyTasks(String status){
+        if (status.equals("null")){
+            System.out.println("— — — — — ALL TASKS — — — — —");
+        } else if (status.equals("in-progress")){
+            System.out.println("— — — — — TASKS IN PROGRESS — — — — —");
+        } else if (status.equals("done")){
+            System.out.println("— — — — — TASKS DONE — — — — —");
+        } else {
+            System.out.println("— — — — — TASKS TO DO — — — — —");
+        }
+        List<Task> tasks = JsonRead.read();
+        size_check(tasks);
+        int i = 1;
+        for (Task task: tasks){
+            if(task.getStatus().equals("deleted")){
+                continue;
+            }
+            if(status.equals("null")){
+                System.out.println("%d: %s \u001B[3m(Task Id: %d)\u001B[23m".formatted(i, task.getDescription(), Integer.parseInt(task.getId())));
+                i++;
+            } else if (task.getStatus().equals(status)){
+                System.out.println("%d: %s \u001B[3m(Task Id: %d)\u001B[23m".formatted(i, task.getDescription(), Integer.parseInt(task.getId())));
+                i++;
+            }
         }
     }
 
