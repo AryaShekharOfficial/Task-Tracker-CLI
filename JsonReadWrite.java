@@ -15,6 +15,9 @@ public class JsonReadWrite {
     public static void main(String args[]){
         if (args.length > 0){ // check if there is any element in args for safety
             switch (args[0]){ // implemented switch case for different commands: add, update, delete, list, mark
+                case "help":
+                    CommandDisplay.displayCommands();
+                    break;
                 case "add":
                     /*
                         If the case is add, it checks if the number of arguments
@@ -108,6 +111,11 @@ public class JsonReadWrite {
                 default:
                     System.out.println("Invalid Command!");
             }
+        } else{
+            System.out.println("""
+                Welcome To The Task Tracker CLI Tool!
+                Use 'task-cli help' to check all the available commands.
+            """);
         }
     }
 }
@@ -374,3 +382,23 @@ class FilePath{
     }
 }
 
+class CommandDisplay{
+    public static void displayCommands(){
+        System.out.println("""
+            Available Commands:
+                task-cli add "YourTaskDescription"                      To add new tasks
+                task-cli update <IndexOfTheTask> "NewTaskDescription"   To update an existing task
+                task-cli delete <IndexOfTheTask>                        To delete a task
+                task-cli mark-in-progress <IndexOfTheTask>              To mark a task as in-progress
+                task-cli mark-done <IndexOfTheTask>                     To mark a task as done
+                task-cli list                                           To list all existing tasks
+                task-cli list done                                      To list all the tasks that are done
+                task-cli list todo                                      To list all the tasks that are not yet started
+                task-cli list in-progress                               To list all the tasks that are in-progress
+                task-cli list details                                   To list all the tasks with full details(Also lists the deleted tasks)
+                task-cli list details done                              To list all the tasks that are done with full details
+                task-cli list details todo                              To list all the tasks that are not yet started with full details
+                task-cli list details in-progress                       To list all the tasks that are in-progress with full details
+        """);
+    }
+}
