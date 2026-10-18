@@ -244,7 +244,14 @@ class JsonWrite{
                 """; //will hold the entire task string to be written to FilePath.getFilePath()
         int markId = Integer.parseInt(markIdString); //will hold the id of the task needs to be marked
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
-        tasks.get(markId-1).setStatus(markAs);
+        Task taskToBeMarked = tasks.get(markId -1);
+        if (!(taskToBeMarked.getStatus().equals(markAs))){
+            taskToBeMarked.setStatus(markAs);
+            System.out.println("Task with ID:%d is now marked as %s".formatted(markId, markAs));
+        } else {
+            System.out.println("The task is already %s".formatted(markAs));
+        }
+        
         // an initial [ is added to toWrite
         toWrite += addOpeningBracket();
         for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
@@ -253,11 +260,6 @@ class JsonWrite{
         toWrite = toWrite.substring(0, toWrite.length() - 2); // to avoid the trailing comma
         toWrite +=  addClosingBracket(); // adds the closing bracket ]
         writeToFile(toWrite);
-        if (markAs.equals("in_progress")){
-            System.out.println("Task %d is in progress.".formatted(markId));
-        } else {
-            System.out.println("Task %d marked as done.".formatted(markId));
-        }
     }
 }
 
@@ -333,6 +335,9 @@ class TaskDisplay{
                 i++;
             }
         }
+        if(i == 1){
+            System.out.println("\u001B[3mNone\u001B[23m");
+        }
     }
 
     // Function to display tasks based on status
@@ -340,13 +345,18 @@ class TaskDisplay{
         List<Task> tasks = JsonRead.read(); // calls the read function of JsonRead class to get the ArrayList of all Task Objects
         size_check(tasks);
         int i = 0;
+        boolean noTask=true;
         for (Task task: tasks){
             i++;
             if (task.getStatus().equals(status)){
+                noTask = false;
                 System.out.println("— — — — — TASK %d — — — — —".formatted(i)); 
                 displayTask(task);
             }
         }
+        if(noTask){
+                System.out.println("\u001B[3mNone\u001B[23m");
+            }
     }
 
     private static void size_check(List<Task> tasks){

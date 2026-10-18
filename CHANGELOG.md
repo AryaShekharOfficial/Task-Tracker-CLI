@@ -1,3 +1,22 @@
+## [0.6.0] - 2026-10-18
+
+### 🚀 Features
+
+- *(mark)* Mark tasks as in progress or done
+- *(display)* Display tasks in progress or done
+- *(add)* Add CLI support for addTask
+- *(cli)* Add CLI support for all commands
+- *(display)* Add new display format
+- *(help)* Add a command helper function
+
+### 🚜 Refactor
+
+- *(display)* Use a single display function
+- *(write)* Add reusable functions
+- *(write)* Modify addTaskToString function
+- *(write)* Add helper functions for ]
+- *(mark)* Use a single mark function
+- *(write)* Modify the write functions
 ## [0.5.0] - 2026-10-13
 
 ### 🚀 Features
