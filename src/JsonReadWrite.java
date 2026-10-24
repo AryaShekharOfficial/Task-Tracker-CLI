@@ -13,9 +13,14 @@ import java.util.Locale;
 
 public class JsonReadWrite {
     public static void main(String args[]){
-        if (args.length > 0){ // check if there is any element in args for safety
-            switch (args[0]){ // implemented switch case for different commands: add, update, delete, list, mark
-                case "help":
+        if (args.length > 0){ // checks if there is any element in args for safety
+            switch (args[0]){ // implemented switch case for different commands: help, add, update, delete, list, mark
+                case "help": 
+                /* 
+                    in case the command is "task-cli help",
+                    the displayCommands function of class CommandDisplay is called,
+                    which displays all the commands the user can use 
+                */ 
                     CommandDisplay.displayCommands();
                     break;
                 case "add":
@@ -24,16 +29,18 @@ public class JsonReadWrite {
                         is less than 2, which would mean the user did not provide any argument
                         (description) after the command. In that case the user will be notified
                         that the command needs an argument.
+
                         If the number of arguments is greater than 3, that would mean
                         the user probably forgot to wrap the description in double
                         quotes. In that case the user will be notified that the argument needs
                         to be wrapped in double quotes.
+
                         If not both the above cases, that would mean the user has provided
                         the necessary description, and so the addTask funtion of the JsonWrite class
                         would be called passing args[1] as the argument.
                     */
                     if (args.length < 2){
-                        System.out.println("Please provide an argument! eg: task-cli add \"MyTask\"");
+                        System.out.println("Please provide an argument! eg: 'task-cli add \"MyTask\"'");
                     } else if (args.length > 2){
                         System.out.println("Please enclose the argument in double quotes! eg: task-cli add \"MyTask\"");
                     } else {
@@ -41,24 +48,61 @@ public class JsonReadWrite {
                     }
                     break;
                 case "update":
+                    /*
+                        If the case is add and the user provides less than 3 arguments,
+                        which would mean the user did not mention the task Id or the new
+                        task description. In that case the user would be notified that either 
+                        of them might be missing.
+
+                        If the number of arguments is greater than 3, the user probably forgot
+                        to wrap the arguments in double quotes. In that case the user would be notified.
+
+                        If there are exactly three arguments the updateTask function would be called.
+                    */
                     if (args.length < 3){
-                        System.out.println("Please provide arguments! eg: update 1 \"UpdatedTask\"");
+                        System.out.println("Please provide arguments! eg: 'update 1 \"UpdatedTask\"'");
                     } else if(args.length > 3){
-                        System.out.println("Please enclose the argument in double quotes! eg: update 1 \"UpdatedTask\"");
+                        System.out.println("Please enclose the argument in double quotes! eg: 'update 1 \"UpdatedTask\"'");
                     } else {
                         JsonWrite.updateTask(args[1], args[2]);
                     }
                     break;
                 case "delete":
+                    /*
+                        If the number of arguments is less than 2 the user probably forgot 
+                        to provide the task Id and will be notified.
+
+                        If the number of arguments is more than 2 the user provided excessive arguments
+                        and will be notified.
+
+                        If the number of arguments is exactly 2 deleteTask function would be called.
+                    */
                     if (args.length < 2){
-                        System.out.println("Please provide an argument! eg: task-cli delete 1");
+                        System.out.println("Please provide an argument! eg: 'task-cli delete 1'");
                     } else if (args.length > 2){
-                        System.out.println("Command \"delete\" accepts only one argument! eg: task-cli delete 1");
+                        System.out.println("Command \"delete\" accepts only one argument! eg: 'task-cli delete 1'");
                     } else {
                         JsonWrite.deleteTask(args[1]);;
                     }
                     break;
                 case "list":
+                    /*
+                        If args.length is greater than 1 and args[1] is 'details',
+                        the program checks if the no. of arguments is exactly 2 which
+                        would mean the command is 'list details'. If so displayTasks function would be called.
+                        If args.length is greater than 3 the user would be notified that the 
+                        command 'task-cli list details' either accepts one or no argument.
+                        If nither is the case i (initially 1) is set to 2 for upcoming switch case.
+
+                        If args.length is 1 that would mean the command is just 'task-cli list', so displayOnlyTasks
+                        would be called with 'null' status.
+                        If args.length is more than 2 and at the same time the command 
+                        does not start with 'task-cli list details', it would mean command
+                        'task-cli list' has excess arguments and the user would be notified.
+
+                        The switch case would then call the necessary function depending on the value of i,
+                        or display 'invalid command' in case of invalid arguments.
+                    */
                     int i = 1;
                     if (args.length > 1 && args[1].equals("details")){
                         if (args.length == 2){
@@ -66,18 +110,36 @@ public class JsonReadWrite {
                             break;
                         }
                         if (args.length > 3){
-                            System.out.println("Command \\\"list details\\\" accepts either one argument or no argument! eg: 1) task-cli list details 2) task-cli list details todo 3) task-cli list details in-progress 4) task-cli list details done");
+                            System.out.println(
+                                """
+                                    Command 'list details' accepts either one argument or no argument! 
+                                    eg: 
+                                    1) task-cli list details 
+                                    2) task-cli list details todo 
+                                    3) task-cli list details in-progress 
+                                    4) task-cli list details done
+                                """
+                            );
                             break;
                         } else {
                             i = 2;
                         }
-                    } else if (args.length > 0){
+                    } else {
                         if (args.length == 1){
                             TaskDisplay.displayOnlyTasks("null");
                             break;
                         } else if (args.length > 2){
-                            System.out.println("Command \\\"list\\\" accepts either one argument or no argument! eg: 1) task-cli list 2) task-cli list todo 3) task-cli list in-progress 4) task-cli list done");
-                            break;
+                            System.out.println(
+                                """
+                                    Command 'list' accepts either one argument or no argument! 
+                                    eg: 
+                                    1) task-cli list 
+                                    2) task-cli list todo 
+                                    3) task-cli list in-progress 
+                                    4) task-cli list done
+                                """
+                            );
+                                break;
                         }
                     }
                     switch (args[i]){
@@ -94,24 +156,29 @@ public class JsonReadWrite {
                     break;
                 case "mark-in-progress":
                     if (args.length < 2){
-                        System.out.println("Please provide an argument! eg: mark-in-progress 1");
+                        System.out.println("Please provide an argument! eg: 'mark-in-progress 1'");
                     } else {
-                        //JsonWrite.markTaskAsInProgress(args[1]);
                         JsonWrite.markTask(args[1], "in-progress");
                     }
                     break;
+                /*
+                    For both commands 'mark-in-progress' and 'mark-done'
+                    if the number of argument is less than 2, the user would be notified to provide
+                    the id of the task to be marked.
+                    Otherwise, the corresponding function will be called.
+                */
                 case "mark-done":
                     if (args.length < 2){
-                        System.out.println("Please provide an argument! eg: mark-done 1");
+                        System.out.println("Please provide an argument! eg: 'mark-done 1'");
                     } else {
                         //JsonWrite.markTaskAsDone(args[1]);
                         JsonWrite.markTask(args[1], "done");
                     }
                     break;
-                default:
+                default://notifies that the user might have provided an invalid command
                     System.out.println("Invalid Command!");
             }
-        } else{
+        } else{ //if user just does task-cli with no argument, the user is welcomed and suggested to use 'task-cli help'
             System.out.println("""
                 Welcome To The Task Tracker CLI Tool!
                 Use 'task-cli help' to check all the available commands.
@@ -122,7 +189,7 @@ public class JsonReadWrite {
 
 //To write to a Json file
 class JsonWrite{
-    // This function adds the String version of a task to toWrite and returns it
+    // This function returns the String version of the task to be added
     private static String addTaskToString(Task task){
         String toWrite = """
                     {
@@ -175,8 +242,7 @@ class JsonWrite{
         else{ // if no tasks exist previous id is set to 0
             prevId = 0;
         }
-        // an initial [ is added to toWrite
-        toWrite += addOpeningBracket();
+        toWrite += addOpeningBracket(); //to add the initial [
         int newId = ++prevId; // the new id will obviously be previoius id + 1
         for (Task task: tasks){ // loops through the list and adds the string version of the Task objects to toWrite, till the last Task
             toWrite += addTaskToString(task);
@@ -244,7 +310,8 @@ class JsonWrite{
                 """; //will hold the entire task string to be written to FilePath.getFilePath()
         int markId = Integer.parseInt(markIdString); //will hold the id of the task needs to be marked
         List<Task> tasks = JsonRead.read(); // call the read function to obtain the ArrayList of tasks
-        Task taskToBeMarked = tasks.get(markId -1);
+        Task taskToBeMarked = tasks.get(markId - 1);
+        //checks first if the task is already marked with the status and marks it if not already marked
         if (!(taskToBeMarked.getStatus().equals(markAs))){
             taskToBeMarked.setStatus(markAs);
             System.out.println("Task with ID:%d is now marked as %s".formatted(markId, markAs));
@@ -269,8 +336,8 @@ class JsonRead{
         Path filepath = Paths.get(FilePath.getFilePath());
         List<Task> tasks = new ArrayList<>();
         try{
-            String readFile = Files.readString(filepath);
-            tasks = TasksParser.handleparse(readFile);
+            String readFile = Files.readString(filepath); //reads the Json file
+            tasks = TasksParser.handleparse(readFile); // parses the Json file using handleparse which returns List<Task> object
         } catch (Exception e) {
             System.out.println("Error Reading File: " + e);
         }
@@ -393,6 +460,7 @@ class FilePath{
 }
 
 class CommandDisplay{
+    // to display all the commands the user can use
     public static void displayCommands(){
         System.out.println("""
             Available Commands:
