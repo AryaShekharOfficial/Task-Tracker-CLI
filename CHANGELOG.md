@@ -1,3 +1,20 @@
+## [0.7.0] - 2026-10-24
+
+### 🚀 Features
+
+- *(build)* Add shell and batch scripts
+
+### 🐛 Bug Fixes
+
+- *(mark,display)* Avoid unnecessary operations
+
+### 📚 Documentation
+
+- *(comments)* Update comments for clarity
+
+### 🚜 Refactor
+
+- *(structure)* Organize the project files
 ## [0.6.0] - 2026-10-18
 
 ### 🚀 Features
