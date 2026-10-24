@@ -1,0 +1,8 @@
+javac -d bin src/*.java
+jar cvfm task-cli.jar manifest.txt -C bin .
+SCRIPT_DIR="$(pwd)/task-cli.jar"
+TO_ECHO="exec java -jar \"$SCRIPT_DIR\" \"\$@\""
+echo "#!/bin/bash" > task-cli
+echo "$TO_ECHO" >> task-cli
+chmod +x task-cli
+sudo mv task-cli "/usr/local/bin/"

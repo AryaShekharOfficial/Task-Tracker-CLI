@@ -335,7 +335,7 @@ class TaskDisplay{
                 i++;
             }
         }
-        if(i == 1){
+        if(i == 1 && !status.equals("null")){
             System.out.println("\u001B[3mNone\u001B[23m");
         }
     }
@@ -376,7 +376,7 @@ class TimeFormatting{
 }
 
 class FilePath{
-    private static final String FILE_PATH = System.getProperty("user.home") + java.io.File.separator + ".tasks.json";
+    private static final String FILE_PATH = "tasks.json";
 
     public static String getFilePath() {
 
