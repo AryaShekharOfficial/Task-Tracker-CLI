@@ -11,6 +11,8 @@
 ### 📚 Documentation
 
 - *(comments)* Update comments for clarity
+- *(changelog)* Update changelog
+- *(readme)* Update README.md
 
 ### 🚜 Refactor
 
